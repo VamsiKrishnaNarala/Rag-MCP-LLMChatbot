@@ -203,35 +203,6 @@ curl -X POST http://127.0.0.1:8000/mcp/query \
 
 ---
 
-## ☁️ Deployment
-
-### Railway (Recommended)
-1. Push this repo to GitHub
-2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
-3. Add start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Get your live URL
-
-### Render
-1. Go to [render.com](https://render.com) → New Web Service
-2. Connect GitHub repo
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
----
-
-## 🔌 Connect to Claude Desktop
-
-Edit `claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "vamsi-resume": {
-      "url": "https://your-deployed-url.railway.app/mcp"
-    }
-  }
-}
-```
-
 ---
 
 ## 👤 About
