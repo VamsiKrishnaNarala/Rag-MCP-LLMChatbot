@@ -30,31 +30,27 @@ Answer → Returns chunks about AnantaNetra, Celebal, Monkify.ai, Tattavit inter
 │                                                             │
 │   ┌─────────────┐        ┌──────────────────────────────┐  │
 │   │  /mcp/query │───────▶│        RAG Engine            │  │
-│   │  /mcp/health│        │   (rag/engine.py)            │  │
+│   │  /mcp/health│        │        (engine.py)           │  │
 │   │  /mcp/chunks│        └──────────────┬───────────────┘  │
 │   └─────────────┘                       │                  │
-│        server/                          ▼                  │
-│        routes.py              ┌─────────────────┐         │
-│        schemas.py             │  Vector Store   │         │
-│                               │ (rag/vector_    │         │
-│                               │  store.py)      │         │
-│                               └────────┬────────┘         │
-└────────────────────────────────────────┼────────────────────┘
-                                         │
-                    ┌────────────────────┼────────────────────┐
-                    │                    │                    │
-                    ▼                    ▼                    ▼
-          ┌──────────────┐    ┌──────────────────┐  ┌──────────────┐
-          │   Chunker    │    │  Sentence        │  │    FAISS     │
-          │ (rag/        │    │  Transformers    │  │    Index     │
-          │  chunker.py) │    │  all-MiniLM-L6-v2│  │ (IndexFlatIP)│
-          └──────┬───────┘    └──────────────────┘  └──────────────┘
+│      routes.py                          ▼                  │
+│      schemas.py               ┌──────────────────┐        │
+│                                │   Vector Store   │        │
+│                                │ (vector_store.py)│        │
+│                                └────────┬─────────┘        │
+└─────────────────────────────────────────┼──────────────────┘
+                                          │
+                    ┌─────────────────────┼──────────────────┐
+                    │                     │                  │
+                    ▼                     ▼                  ▼
+          ┌──────────────┐   ┌─────────────────────┐  ┌──────────────┐
+          │  chunker.py  │   │ Sentence Transformers│  │    FAISS     │
+          │              │   │  all-MiniLM-L6-v2   │  │ IndexFlatIP  │
+          └──────┬───────┘   └─────────────────────┘  └──────────────┘
                  │
                  ▼
        ┌──────────────────┐
-       │   Resume Data    │
-       │ (data/           │
-       │  resume_data.py) │
+       │  resume_data.py  │
        │                  │
        │  • personal      │
        │  • skills        │
@@ -77,7 +73,7 @@ User Query
 POST /mcp/query  {"query": "What are Vamsi's LLM skills?", "top_k": 3}
     │
     ▼
-Encode query → 384-dim vector (Sentence Transformers)
+Encode query → 384-dim vector  (Sentence Transformers)
     │
     ▼
 FAISS Cosine Similarity Search → Top-K matching chunks
@@ -88,33 +84,19 @@ Return { query, retrieved_chunks, context, top_category }
 
 ---
 
-## 📁 Folder Structure
+## 📁 File Structure
 
 ```
-resume_mcp/
-│
-├── main.py                    ← FastAPI app entry point
-├── requirements.txt           ← Python dependencies
-├── .gitignore
-├── README.md
-│
-├── data/
-│   ├── __init__.py
-│   └── resume_data.py         ← Resume structured as Python dict
-│
-├── rag/
-│   ├── __init__.py
-│   ├── chunker.py             ← Converts resume dict → text chunks
-│   ├── vector_store.py        ← FAISS index + cosine search
-│   └── engine.py              ← RAG pipeline (retrieve + context)
-│
-├── server/
-│   ├── __init__.py
-│   ├── routes.py              ← API route handlers
-│   └── schemas.py             ← Pydantic request/response models
-│
-└── config/
-    └── claude_desktop_config.json
+project/
+├── main.py            ← FastAPI app entry point
+├── resume_data.py     ← Resume data as Python dict
+├── chunker.py         ← Converts resume dict → text chunks
+├── vector_store.py    ← FAISS index + cosine similarity search
+├── engine.py          ← RAG pipeline (retrieve + build context)
+├── schemas.py         ← Pydantic request/response models
+├── routes.py          ← API route handlers
+├── requirements.txt   ← Python dependencies
+└── README.md
 ```
 
 ---
@@ -134,7 +116,7 @@ python -m venv .venv
 # Windows
 .venv\Scripts\activate
 
-# Mac/Linux
+# Mac / Linux
 source .venv/bin/activate
 ```
 
@@ -211,7 +193,7 @@ curl -X POST http://127.0.0.1:8000/mcp/query \
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|------------|
 | API Framework | FastAPI |
 | Embedding Model | `all-MiniLM-L6-v2` (Sentence Transformers) |
 | Vector Search | FAISS (IndexFlatIP — cosine similarity) |
@@ -227,7 +209,7 @@ curl -X POST http://127.0.0.1:8000/mcp/query \
 1. Push this repo to GitHub
 2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub
 3. Add start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. Done — get your live URL
+4. Get your live URL
 
 ### Render
 1. Go to [render.com](https://render.com) → New Web Service
@@ -254,7 +236,7 @@ Edit `claude_desktop_config.json`:
 
 ## 👤 About
 
-**Narala Vamsi Krishna**  
-M.Tech in CS (AIML) — JNTUK, Kakinada  
-📧 vamsikrishnanarala104@gmail.com  
+**Narala Vamsi Krishna**
+M.Tech in CS (AIML) — JNTUK, Kakinada
+📧 vamsikrishnanarala104@gmail.com
 📍 Konaseema, Andhra Pradesh
